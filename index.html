@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Games Hub</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS File -->
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <!--PAGE HEADING-->
+
+    <h1>🎮 Mini Games Hub</h1>
+    <p class="subtitle">5 chote chote fun games!</p>
+
+
+    <!--SAARE GAMES KA GRID-->
+    
+    <div class="games-grid">
+
+
+        <!-- GAME 1 - EMOJI QUIZ -->
+         
+        <div class="game-card card-1">
+
+            <div class="game-title">
+                🤔 Emoji Quiz
+                <span class="score-badge" id="quiz-score">0/8</span>
+            </div>
+
+            <p class="game-desc">Emoji dekho aur sahi jawab chunno!</p>
+
+            <!-- Question yahan dikhega -->
+            <div class="quiz-question" id="quiz-q">
+                Press Start! 🚀
+            </div>
+
+            <!-- 4 Options yahan JS se aayenge -->
+            <div class="quiz-options" id="quiz-opts">
+
+            </div>
+
+            <!-- Start Button aur Result -->
+            <div class="quiz-bottom">
+                <button class="btn btn-red" onclick="startQuiz()">▶ Start</button>
+                <span id="quiz-result"></span>
+            </div>
+
+        </div>
+        <!-- GAME 1 KHATAM -->
+
+
+        <!-- =====================
+             GAME 2 - MEMORY MATCH
+        ===================== -->
+        <div class="game-card card-2">
+
+            <div class="game-title">🃏 Memory Match</div>
+
+            <p class="game-desc">Same emojis dhundo! Cards flip karke match karo.</p>
+
+            <!-- Moves aur Matched Counter -->
+            <div class="mem-info">
+                <span>Moves: <b id="moves">0</b></span>
+                <span>Matched: <b id="matched">0</b>/8</span>
+            </div>
+
+            <!-- 16 Cards yahan JS se aayenge -->
+            <div class="memory-grid" id="memory-grid">
+
+            </div>
+
+            <!-- Shuffle Button -->
+            <button class="btn btn-yellow" onclick="initMemory()">🔀 Shuffle</button>
+
+        </div>
+        <!-- GAME 2 KHATAM -->
+
+
+        <!-- =====================
+             GAME 3 - REACTION TEST
+        ===================== -->
+        <div class="game-card card-3">
+
+            <div class="game-title">⚡ Reaction Test</div>
+
+            <p class="game-desc">Green hote hi click karo — jitna fast utna better!</p>
+
+            <!-- Yeh box green hoga jab click karna hoga -->
+            <div class="reaction-area waiting" id="reaction-box" onclick="reactionClick()">
+                Click "Start" phir wait karo...
+            </div>
+
+            <!-- Previous times yahan dikhenge (e.g. 245ms) -->
+            <div class="reaction-results" id="reaction-results">
+
+            </div>
+
+            <!-- Start Button aur Average -->
+            <div class="reaction-bottom">
+                <button class="btn btn-green" onclick="startReaction()">▶ Start</button>
+                <span id="reaction-avg"></span>
+            </div>
+
+        </div>
+        <!-- GAME 3 KHATAM -->
+
+
+        <!-- =====================
+             GAME 4 - NUMBER GUESS
+        ===================== -->
+        <div class="game-card card-4">
+
+            <div class="game-title">🔢 Number Guess</div>
+
+            <p class="game-desc">1 se 100 ke beech number guess karo! 7 chances hain.</p>
+
+            <!-- Bada number display -->
+            <div class="guess-display" id="guess-display">?</div>
+
+            <!-- Progress Bar -->
+            <div class="guess-bar">
+                <div class="guess-fill" id="guess-fill"></div>
+            </div>
+
+            <!-- Hint (zyada ya kam) -->
+            <div class="guess-hint" id="guess-hint">
+                Start dabao aur guess karo!
+            </div>
+
+            <!-- Input Box aur Go Button -->
+            <div class="guess-input-row">
+                <input
+                    class="guess-input"
+                    id="guess-input"
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="1 - 100"
+                    onkeydown="if(event.key === 'Enter') checkGuess()"
+                >
+                <button class="btn btn-blue" onclick="checkGuess()">Go!</button>
+            </div>
+
+            <!-- New Game Button aur Attempts Counter -->
+            <div class="guess-bottom">
+                <button class="btn btn-outline" onclick="startGuess()">🔁 New Game</button>
+                <span id="guess-attempts">Attempts: 0/7</span>
+            </div>
+
+        </div>
+        <!-- GAME 4 KHATAM -->
+
+
+        <!-- =====================
+             GAME 5 - WORD SCRAMBLE
+        ===================== -->
+        <div class="game-card card-5">
+
+            <div class="game-title">
+                🔤 Word Scramble
+                <span class="score-badge" id="ws-score">0</span>
+            </div>
+
+            <p class="game-desc">Ulta-pulta word seedha karo! Type karke Enter dabao.</p>
+
+            <!-- Scrambled Word yahan dikhega -->
+            <div class="scramble-word" id="scramble-word">
+                ?????
+            </div>
+
+            <!-- Hint -->
+            <div class="scramble-hint" id="scramble-hint">
+                Hint: —
+            </div>
+
+            <!-- Input Box aur Check Button -->
+            <div class="scramble-input-row">
+                <input
+                    class="scramble-input"
+                    id="scramble-input"
+                    type="text"
+                    placeholder="TYPE HERE..."
+                    onkeydown="if(event.key === 'Enter') checkScramble()"
+                >
+                <button class="btn btn-purple" onclick="checkScramble()">✓</button>
+            </div>
+
+            <!-- Skip Button aur Streak -->
+            <div class="scramble-bottom">
+                <button class="btn btn-outline" onclick="nextScramble()">⏭ Skip</button>
+                <div class="streak-display">🔥 Streak: <b id="ws-streak">0</b></div>
+            </div>
+
+        </div>
+        <!-- GAME 5 KHATAM -->
+
+
+    </div>
+    <!-- GAMES GRID KHATAM -->
+
+
+    <!-- =====================
+         TOAST NOTIFICATION
+         (Neeche se popup message)
+    ===================== -->
+    <div class="toast" id="toast"></div>
+
+
+    <!-- JS File sabse neeche -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>
