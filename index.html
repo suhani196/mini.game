@@ -1,1 +1,165 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Games Hub</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="main-header">
+        <h1>🎮 Mini Games Hub</h1>
+        <p class="subtitle">Play fun mini games & challenge yourself</p>
+    </header>
+
+
+    <!-- ===== MAIN CONTAINER ===== -->
+    <main class="container">
+
+
+        <!-- ===== GAME 1: EMOJI QUIZ ===== -->
+        <section class="game-card">
+            <div class="card-header">
+                <h2>🤔 Emoji Quiz</h2>
+                <span class="badge" id="quiz-score">0/8</span>
+            </div>
+
+            <p class="desc">Guess the correct answer using emojis</p>
+
+            <div id="quiz-q" class="quiz-question">Click start to begin 🚀</div>
+
+            <div id="quiz-opts" class="quiz-options"></div>
+
+            <div class="actions">
+                <button class="btn" onclick="startQuiz()">Start</button>
+                <span id="quiz-result"></span>
+            </div>
+        </section>
+
+
+        <!-- ===== GAME 2: MEMORY MATCH ===== -->
+        <section class="game-card">
+            <div class="card-header">
+                <h2>🃏 Memory Match</h2>
+            </div>
+
+            <p class="desc">Flip cards and match the same emojis</p>
+
+            <div class="stats">
+                <span>Moves: <b id="moves">0</b></span>
+                <span>Matched: <b id="matched">0</b>/8</span>
+            </div>
+
+            <div id="memory-grid" class="memory-grid"></div>
+
+            <button class="btn" onclick="initMemory()">Shuffle</button>
+        </section>
+
+
+        <!-- ===== GAME 3: REACTION TEST ===== -->
+        <section class="game-card">
+            <div class="card-header">
+                <h2>⚡ Reaction Test</h2>
+            </div>
+
+            <p class="desc">Click as soon as the box turns green</p>
+
+            <div id="reaction-box" class="reaction-area" onclick="reactionClick()">
+                Click start and wait...
+            </div>
+
+            <div id="reaction-results" class="reaction-results"></div>
+
+            <div class="actions">
+                <button class="btn" onclick="startReaction()">Start</button>
+                <span id="reaction-avg"></span>
+            </div>
+        </section>
+
+
+        <!-- ===== GAME 4: NUMBER GUESS ===== -->
+        <section class="game-card">
+            <div class="card-header">
+                <h2>🔢 Number Guess</h2>
+            </div>
+
+            <p class="desc">Guess a number between 1 and 100</p>
+
+            <div id="guess-display" class="guess-display">?</div>
+
+            <div class="guess-bar">
+                <div id="guess-fill" class="guess-fill"></div>
+            </div>
+
+            <p id="guess-hint" class="hint">Press New Game to start</p>
+
+            <div class="input-row">
+                <input 
+                    id="guess-input" 
+                    type="number" 
+                    min="1" 
+                    max="100" 
+                    placeholder="Enter number"
+                    onkeydown="if(event.key==='Enter') checkGuess()"
+                >
+                <button class="btn" onclick="checkGuess()">Go</button>
+            </div>
+
+            <div class="actions">
+                <button class="btn outline" onclick="startGuess()">New Game</button>
+                <span id="guess-attempts">0/7</span>
+            </div>
+        </section>
+
+
+        <!-- ===== GAME 5: WORD SCRAMBLE ===== -->
+        <section class="game-card">
+            <div class="card-header">
+                <h2>🔤 Word Scramble</h2>
+                <span class="badge" id="ws-score">0</span>
+            </div>
+
+            <p class="desc">Unscramble the word correctly</p>
+
+            <div id="scramble-word" class="scramble-word">?????</div>
+
+            <p id="scramble-hint" class="hint">Hint will appear here</p>
+
+            <div class="input-row">
+                <input 
+                    id="scramble-input" 
+                    type="text" 
+                    placeholder="Type your answer"
+                    onkeydown="if(event.key==='Enter') checkScramble()"
+                >
+                <button class="btn" onclick="checkScramble()">Check</button>
+            </div>
+
+            <div class="actions">
+                <button class="btn outline" onclick="nextScramble()">Skip</button>
+                <span>🔥 Streak: <b id="ws-streak">0</b></span>
+            </div>
+        </section>
+
+
+    </main>
+
+
+    <!-- ===== TOAST ===== -->
+    <div id="toast" class="toast"></div>
+
+
+    <!-- JS -->
+    <script src="script.js"></script>
+
+</body>
+</html>
