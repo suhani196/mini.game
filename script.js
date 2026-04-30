@@ -1,182 +1,181 @@
-// ============================================
-// TOAST NOTIFICATION
-// ============================================
+/* =========================
+   TOAST SYSTEM
+========================= */
 
-function showToast(message, color) {
-    var toast = document.getElementById('toast');
+function showToast(message) {
+    const toast = document.getElementById('toast');
+
     toast.textContent = message;
-    toast.style.borderColor = color;
-    toast.style.color = color;
     toast.classList.add('show');
 
-    setTimeout(function() {
+    setTimeout(() => {
         toast.classList.remove('show');
     }, 2000);
 }
 
 
-// ============================================
-// GAME 1 - EMOJI QUIZ
-// ============================================
+/* =========================
+   GAME 1 - EMOJI QUIZ
+========================= */
 
-var quizData = [
-    { q: '🍕 + 🍕 = ?',       opts: ['🍕🍕', '🍔', '🍕x2', '2 Pizza'],          ans: 0 },
-    { q: '🐶 says what?',      opts: ['Meow', 'Woof', 'Moo', 'Oink'],             ans: 1 },
-    { q: 'Capital of 🇮🇳?',   opts: ['Mumbai', 'Kolkata', 'New Delhi', 'Chennai'], ans: 2 },
-    { q: '2 + 2 = ?',          opts: ['3', '5', '4', '22'],                        ans: 2 },
-    { q: '🌙 comes after?',    opts: ['Dawn', 'Noon', 'Evening', 'Sunset'],        ans: 2 },
-    { q: '🍌 is a?',           opts: ['Vegetable', 'Fruit', 'Grain', 'Nut'],       ans: 1 },
-    { q: 'Fastest animal 🏃?', opts: ['Lion', 'Eagle', 'Cheetah', 'Horse'],        ans: 2 },
-    { q: '🔴 + 🔵 = ?',       opts: ['Green', 'Purple', 'Orange', 'Pink'],        ans: 1 },
+const quizData = [
+    { q: '🍕 + 🍕 = ?', opts: ['🍕🍕', '🍔', '🍕x2', '2 Pizza'], ans: 0 },
+    { q: '🐶 says?', opts: ['Meow', 'Woof', 'Moo', 'Oink'], ans: 1 },
+    { q: 'Capital of India?', opts: ['Mumbai', 'Kolkata', 'New Delhi', 'Chennai'], ans: 2 },
+    { q: '2 + 2 = ?', opts: ['3', '5', '4', '22'], ans: 2 },
+    { q: '🌙 comes after?', opts: ['Dawn', 'Noon', 'Evening', 'Sunset'], ans: 2 },
+    { q: '🍌 is a?', opts: ['Vegetable', 'Fruit', 'Grain', 'Nut'], ans: 1 },
+    { q: 'Fastest animal?', opts: ['Lion', 'Eagle', 'Cheetah', 'Horse'], ans: 2 },
+    { q: 'Red + Blue = ?', opts: ['Green', 'Purple', 'Orange', 'Pink'], ans: 1 }
 ];
 
-var qIdx       = 0;
-var quizScore  = 0;
-var quizActive = false;
+let quizIndex = 0;
+let quizScore = 0;
+let quizActive = false;
 
 function startQuiz() {
-    qIdx       = 0;
-    quizScore  = 0;
+    quizIndex = 0;
+    quizScore = 0;
     quizActive = true;
+
     document.getElementById('quiz-result').textContent = '';
-    showQuizQuestion();
+    loadQuiz();
 }
 
-function showQuizQuestion() {
-    if (qIdx >= quizData.length) {
-        document.getElementById('quiz-q').textContent    = quizScore >= 6 ? '🎉 Shandaar!' : '😊 Done!';
-        document.getElementById('quiz-opts').innerHTML   = '';
-        document.getElementById('quiz-result').textContent = quizScore + '/' + quizData.length + ' sahi!';
-        document.getElementById('quiz-score').textContent  = quizScore + '/' + quizData.length;
+function loadQuiz() {
+    if (quizIndex >= quizData.length) {
+        document.getElementById('quiz-q').textContent =
+            quizScore >= 6 ? '🎉 Great Job!' : '😊 Finished!';
+
+        document.getElementById('quiz-opts').innerHTML = '';
+        document.getElementById('quiz-score').textContent =
+            `${quizScore}/${quizData.length}`;
+
         quizActive = false;
         return;
     }
 
-    var current = quizData[qIdx];
-    document.getElementById('quiz-q').textContent    = current.q;
-    document.getElementById('quiz-score').textContent = qIdx + '/' + quizData.length;
+    const data = quizData[quizIndex];
 
-    var optsDiv = document.getElementById('quiz-opts');
-    optsDiv.innerHTML = '';
+    document.getElementById('quiz-q').textContent = data.q;
+    document.getElementById('quiz-score').textContent =
+        `${quizIndex}/${quizData.length}`;
 
-    for (var i = 0; i < current.opts.length; i++) {
-        var btn = document.createElement('button');
-        btn.className   = 'quiz-opt';
-        btn.textContent = current.opts[i];
-        btn.setAttribute('data-index', i);
-        btn.onclick = function() {
-            answerQuiz(parseInt(this.getAttribute('data-index')), this);
-        };
-        optsDiv.appendChild(btn);
-    }
+    const container = document.getElementById('quiz-opts');
+    container.innerHTML = '';
+
+    data.opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+
+        btn.onclick = () => checkAnswer(i, btn);
+        container.appendChild(btn);
+    });
 }
 
-function answerQuiz(selectedIndex, clickedBtn) {
+function checkAnswer(index, btn) {
     if (!quizActive) return;
 
-    var current  = quizData[qIdx];
-    var allBtns  = document.querySelectorAll('.quiz-opt');
+    const correct = quizData[quizIndex].ans;
+    const buttons = document.querySelectorAll('#quiz-opts button');
 
-    allBtns.forEach(function(b) {
-        b.onclick = null;
-    });
+    buttons.forEach(b => (b.disabled = true));
 
-    if (selectedIndex === current.ans) {
-        clickedBtn.classList.add('correct');
+    if (index === correct) {
+        btn.style.background = '#2ecc71';
         quizScore++;
-        showToast('✅ Sahi hai!', 'var(--accent3)');
+        showToast('Correct ✅');
     } else {
-        clickedBtn.classList.add('wrong');
-        allBtns[current.ans].classList.add('correct');
-        showToast('❌ Galat!', 'var(--accent1)');
+        btn.style.background = '#e74c3c';
+        buttons[correct].style.background = '#2ecc71';
+        showToast('Wrong ❌');
     }
 
-    setTimeout(function() {
-        qIdx++;
-        showQuizQuestion();
-    }, 900);
+    setTimeout(() => {
+        quizIndex++;
+        loadQuiz();
+    }, 800);
 }
 
 startQuiz();
 
 
-// ============================================
-// GAME 2 - MEMORY MATCH
-// ============================================
+/* =========================
+   GAME 2 - MEMORY MATCH
+========================= */
 
-var emojis       = ['🐶', '🐱', '🦊', '🐸', '🦁', '🐧', '🦋', '🌸'];
-var memCards     = [];
-var flipped      = [];
-var matchedCount = 0;
-var movesCount   = 0;
-var canFlip      = true;
+const emojis = ['🐶', '🐱', '🦊', '🐸', '🦁', '🐧', '🦋', '🌸'];
+
+let cards = [];
+let flipped = [];
+let moves = 0;
+let matched = 0;
+let lock = false;
 
 function initMemory() {
-    var allEmojis = emojis.concat(emojis);
+    const board = document.getElementById('memory-grid');
 
-    // Shuffle karo
-    allEmojis.sort(function() {
-        return Math.random() - 0.5;
-    });
+    const shuffled = [...emojis, ...emojis]
+        .sort(() => Math.random() - 0.5);
 
-    flipped      = [];
-    matchedCount = 0;
-    movesCount   = 0;
-    canFlip      = true;
+    board.innerHTML = '';
+    cards = [];
+    flipped = [];
+    moves = 0;
+    matched = 0;
+    lock = false;
 
-    document.getElementById('moves').textContent   = 0;
+    document.getElementById('moves').textContent = 0;
     document.getElementById('matched').textContent = 0;
 
-    var grid = document.getElementById('memory-grid');
-    grid.innerHTML = '';
-    memCards = [];
+    shuffled.forEach(symbol => {
+        const card = document.createElement('div');
+        card.className = 'mem-card';
+        card.dataset.value = symbol;
+        card.textContent = '❓';
 
-    for (var i = 0; i < allEmojis.length; i++) {
-        var card = document.createElement('div');
-        card.className        = 'mem-card';
-        card.dataset.emoji    = allEmojis[i];
-        card.innerHTML        = '<span class="back">❓</span><span class="front">' + allEmojis[i] + '</span>';
-        card.onclick          = (function(c) {
-            return function() { flipCard(c); };
-        })(card);
-        grid.appendChild(card);
-        memCards.push(card);
-    }
+        card.onclick = () => flipCard(card);
+
+        board.appendChild(card);
+        cards.push(card);
+    });
 }
 
 function flipCard(card) {
-    if (!canFlip) return;
-    if (card.classList.contains('flipped')) return;
-    if (card.classList.contains('matched')) return;
+    if (lock || card.classList.contains('open')) return;
 
-    card.classList.add('flipped');
+    card.classList.add('open');
+    card.textContent = card.dataset.value;
+
     flipped.push(card);
 
     if (flipped.length === 2) {
-        canFlip = false;
-        movesCount++;
-        document.getElementById('moves').textContent = movesCount;
+        lock = true;
+        moves++;
+        document.getElementById('moves').textContent = moves;
 
-        if (flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
-            // Match mila!
-            flipped[0].classList.add('matched');
-            flipped[1].classList.add('matched');
-            matchedCount++;
-            document.getElementById('matched').textContent = matchedCount;
-            flipped  = [];
-            canFlip  = true;
+        const [a, b] = flipped;
 
-            if (matchedCount === 8) {
-                showToast('🎉 ' + movesCount + ' moves mein complete!', 'var(--accent2)');
+        if (a.dataset.value === b.dataset.value) {
+            matched++;
+            document.getElementById('matched').textContent = matched;
+
+            flipped = [];
+            lock = false;
+
+            if (matched === emojis.length) {
+                showToast('🎉 You Won!');
             }
         } else {
-            // Match nahi mila — wapas palto
-            setTimeout(function() {
-                flipped[0].classList.remove('flipped');
-                flipped[1].classList.remove('flipped');
+            setTimeout(() => {
+                a.classList.remove('open');
+                b.classList.remove('open');
+                a.textContent = '❓';
+                b.textContent = '❓';
+
                 flipped = [];
-                canFlip = true;
-            }, 800);
+                lock = false;
+            }, 700);
         }
     }
 }
@@ -184,244 +183,151 @@ function flipCard(card) {
 initMemory();
 
 
-// ============================================
-// GAME 3 - REACTION TEST
-// ============================================
+/* =========================
+   GAME 3 - REACTION TEST
+========================= */
 
-var reactionState  = 'idle';
-var reactionTimer  = null;
-var reactionStart  = 0;
-var reactionTimes  = [];
+let state = 'idle';
+let startTime;
+let timer;
 
 function startReaction() {
-    reactionState = 'waiting';
-    reactionTimes = [];
+    const box = document.getElementById('reaction-box');
 
-    document.getElementById('reaction-results').innerHTML = '';
-    document.getElementById('reaction-avg').textContent   = '';
+    box.textContent = 'Wait for green...';
+    box.style.background = '#222';
 
-    var box = document.getElementById('reaction-box');
-    box.className   = 'reaction-area waiting';
-    box.textContent = '🟡 Ruko... green hone ka wait karo';
+    state = 'waiting';
 
-    clearTimeout(reactionTimer);
+    const delay = 1000 + Math.random() * 3000;
 
-    var delay = 1500 + Math.random() * 3000;
+    timer = setTimeout(() => {
+        box.textContent = 'CLICK NOW!';
+        box.style.background = '#2ecc71';
 
-    reactionTimer = setTimeout(function() {
-        box.className   = 'reaction-area ready';
-        box.textContent = '🟢 ABHI CLICK KARO!';
-        reactionStart   = Date.now();
-        reactionState   = 'ready';
+        startTime = Date.now();
+        state = 'ready';
     }, delay);
 }
 
 function reactionClick() {
-    var box = document.getElementById('reaction-box');
+    const box = document.getElementById('reaction-box');
 
-    if (reactionState === 'waiting') {
-        clearTimeout(reactionTimer);
-        box.className   = 'reaction-area too-early';
-        box.textContent = '❌ Bahut jaldi! Dobara try karo...';
-        reactionState   = 'idle';
-        showToast('Bahut jaldi! ⚡', 'var(--accent1)');
+    if (state === 'waiting') {
+        clearTimeout(timer);
+        showToast('Too early ❌');
+        state = 'idle';
+        box.textContent = 'Click Start again';
         return;
     }
 
-    if (reactionState === 'ready') {
-        var ms = Date.now() - reactionStart;
-        reactionTimes.push(ms);
-        reactionState = 'idle';
+    if (state === 'ready') {
+        const time = Date.now() - startTime;
 
-        box.className   = 'reaction-area waiting';
+        showToast(`${time}ms ⚡`);
+        box.textContent = `${time}ms`;
 
-        // Result chip banao
-        var chip = document.createElement('div');
-        chip.className   = 'reaction-chip';
-        chip.textContent = ms + 'ms';
-        document.getElementById('reaction-results').appendChild(chip);
-
-        // Average calculate karo
-        if (reactionTimes.length >= 3) {
-            var total = 0;
-            for (var i = 0; i < reactionTimes.length; i++) {
-                total += reactionTimes[i];
-            }
-            var avg = Math.round(total / reactionTimes.length);
-            document.getElementById('reaction-avg').textContent = 'Avg: ' + avg + 'ms';
-        }
-
-        var emoji = ms < 200 ? '🚀 Ultra Fast!' : ms < 300 ? '⚡ Fast!' : ms < 450 ? '👍 OK' : '🐢 Slow';
-        showToast(ms + 'ms — ' + emoji, 'var(--accent4)');
-
-        if (reactionTimes.length < 5) {
-            box.textContent = ms + 'ms! Aur ek baar? Click "Start"';
-        } else {
-            var total2 = 0;
-            for (var j = 0; j < reactionTimes.length; j++) {
-                total2 += reactionTimes[j];
-            }
-            var avg2 = Math.round(total2 / reactionTimes.length);
-            box.textContent = 'Done! Avg: ' + avg2 + 'ms';
-        }
+        state = 'idle';
     }
 }
 
 
-// ============================================
-// GAME 4 - NUMBER GUESS
-// ============================================
+/* =========================
+   GAME 4 - NUMBER GUESS
+========================= */
 
-var secretNum    = 0;
-var guessAttempts = 0;
-var guessActive  = false;
+let secret = 0;
+let attempts = 0;
+let active = false;
 
 function startGuess() {
-    secretNum     = Math.floor(Math.random() * 100) + 1;
-    guessAttempts = 0;
-    guessActive   = true;
+    secret = Math.floor(Math.random() * 100) + 1;
+    attempts = 0;
+    active = true;
 
-    document.getElementById('guess-display').textContent  = '?';
-    document.getElementById('guess-hint').textContent     = '1 se 100 ke beech guess karo!';
-    document.getElementById('guess-attempts').textContent = 'Attempts: 0/7';
-    document.getElementById('guess-fill').style.width     = '50%';
-
-    var input = document.getElementById('guess-input');
-    input.value    = '';
-    input.disabled = false;
-    input.focus();
+    document.getElementById('guess-display').textContent = '?';
+    document.getElementById('guess-hint').textContent = 'Start guessing!';
+    document.getElementById('guess-attempts').textContent = '0/7';
 }
 
 function checkGuess() {
-    if (!guessActive) {
-        startGuess();
-        return;
-    }
+    if (!active) return startGuess();
 
-    var input = document.getElementById('guess-input');
-    var val   = parseInt(input.value);
+    const input = document.getElementById('guess-input');
+    const val = Number(input.value);
 
-    if (!val || val < 1 || val > 100) {
-        showToast('1-100 ke beech likho!', 'var(--accent1)');
-        return;
-    }
+    if (!val) return;
 
-    guessAttempts++;
-    document.getElementById('guess-attempts').textContent = 'Attempts: ' + guessAttempts + '/7';
-    input.value = '';
+    attempts++;
 
-    var pct = (val / 100) * 100;
-    document.getElementById('guess-fill').style.width = pct + '%';
+    document.getElementById('guess-attempts').textContent =
+        `${attempts}/7`;
 
-    if (val === secretNum) {
-        document.getElementById('guess-display').textContent = '🎉';
-        document.getElementById('guess-hint').textContent    = 'Sahi! ' + guessAttempts + ' attempts mein mila!';
-        showToast('🎉 ' + guessAttempts + ' moves mein milgaya!', 'var(--accent3)');
-        guessActive    = false;
-        input.disabled = true;
-
-    } else if (guessAttempts >= 7) {
-        document.getElementById('guess-display').textContent = secretNum;
-        document.getElementById('guess-hint').textContent    = 'Oof! Number tha ' + secretNum + '. Dobara try karo!';
-        showToast('💀 Game Over! New Game dabao', 'var(--accent1)');
-        guessActive    = false;
-        input.disabled = true;
-
-    } else if (val < secretNum) {
-        document.getElementById('guess-display').textContent = val + ' 📈';
-        document.getElementById('guess-hint').textContent    = val + ' se zyada hai! ' + (7 - guessAttempts) + ' chances baaki';
-
+    if (val === secret) {
+        showToast('Correct 🎉');
+        active = false;
+    } else if (attempts >= 7) {
+        showToast(`Game Over ❌ ${secret}`);
+        active = false;
+    } else if (val < secret) {
+        showToast('Higher 📈');
     } else {
-        document.getElementById('guess-display').textContent = val + ' 📉';
-        document.getElementById('guess-hint').textContent    = val + ' se kam hai! ' + (7 - guessAttempts) + ' chances baaki';
+        showToast('Lower 📉');
     }
+
+    input.value = '';
 }
 
 startGuess();
 
 
-// ============================================
-// GAME 5 - WORD SCRAMBLE
-// ============================================
+/* =========================
+   GAME 5 - WORD SCRAMBLE
+========================= */
 
-var wordList = [
-    { word: 'MANGO', hint: '🥭 Ek fruit'         },
-    { word: 'TIGER', hint: '🐯 Jungle ka raja'    },
-    { word: 'CLOUD', hint: '☁️ Sky mein'          },
-    { word: 'CHAIR', hint: '🪑 Baithne ke liye'   },
-    { word: 'MUSIC', hint: '🎵 Sunne ke liye'     },
-    { word: 'PLANT', hint: '🌿 Garden mein'       },
-    { word: 'BREAD', hint: '🍞 Khane ki cheez'    },
-    { word: 'RIVER', hint: '🏞️ Pani bahta hai'    },
-    { word: 'CLOCK', hint: '🕐 Time batata hai'   },
-    { word: 'FLAME', hint: '🔥 Jalti cheez'       },
+const words = [
+    { w: 'MANGO', h: '🥭 Fruit' },
+    { w: 'TIGER', h: '🐯 Animal' },
+    { w: 'CLOUD', h: '☁️ Sky' },
+    { w: 'CHAIR', h: '🪑 Object' },
+    { w: 'MUSIC', h: '🎵 Sound' }
 ];
 
-var usedIndexes  = [];
-var wsScore      = 0;
-var wsStreak     = 0;
-var currentWord  = null;
-
-function scrambleWord(word) {
-    var arr = word.split('');
-    do {
-        arr.sort(function() { return Math.random() - 0.5; });
-    } while (arr.join('') === word);
-    return arr.join('');
-}
+let current;
+let streak = 0;
+let score = 0;
 
 function nextScramble() {
-    if (usedIndexes.length === wordList.length) {
-        usedIndexes = [];
-    }
+    current = words[Math.floor(Math.random() * words.length)];
 
-    var pool = [];
-    for (var i = 0; i < wordList.length; i++) {
-        if (usedIndexes.indexOf(i) === -1) {
-            pool.push(i);
-        }
-    }
+    const scrambled = current.w
+        .split('')
+        .sort(() => Math.random() - 0.5)
+        .join('');
 
-    var randomIndex = pool[Math.floor(Math.random() * pool.length)];
-    usedIndexes.push(randomIndex);
-    currentWord = wordList[randomIndex];
+    document.getElementById('scramble-word').textContent = scrambled;
+    document.getElementById('scramble-hint').textContent = current.h;
 
-    document.getElementById('scramble-word').textContent = scrambleWord(currentWord.word);
-    document.getElementById('scramble-hint').textContent = 'Hint: ' + currentWord.hint;
-
-    var input = document.getElementById('scramble-input');
-    input.value = '';
-    input.classList.remove('correct-anim', 'wrong-anim');
+    document.getElementById('scramble-input').value = '';
 }
 
 function checkScramble() {
-    var input = document.getElementById('scramble-input');
-    var val   = input.value.trim().toUpperCase();
+    const input = document.getElementById('scramble-input').value.toUpperCase();
 
-    if (!val) return;
+    if (input === current.w) {
+        score++;
+        streak++;
 
-    if (val === currentWord.word) {
-        wsScore++;
-        wsStreak++;
-        document.getElementById('ws-score').textContent  = wsScore;
-        document.getElementById('ws-streak').textContent = wsStreak;
-        input.classList.add('correct-anim');
-        showToast('✅ Sahi! 🔥 Streak: ' + wsStreak, 'var(--accent3)');
+        showToast('Correct 🔥');
 
-        setTimeout(function() {
-            nextScramble();
-        }, 600);
+        document.getElementById('ws-score').textContent = score;
+        document.getElementById('ws-streak').textContent = streak;
 
+        nextScramble();
     } else {
-        wsStreak = 0;
+        streak = 0;
+        showToast('Wrong ❌');
         document.getElementById('ws-streak').textContent = 0;
-        input.classList.add('wrong-anim');
-        showToast('❌ Galat! Try again', 'var(--accent1)');
-
-        setTimeout(function() {
-            input.classList.remove('wrong-anim');
-            input.value = '';
-        }, 500);
     }
 }
 
